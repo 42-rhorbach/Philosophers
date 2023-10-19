@@ -6,13 +6,15 @@
 #    By: rhorbach <rhorbach@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/10/10 17:07:20 by rhorbach      #+#    #+#                  #
-#    Updated: 2023/10/10 17:14:22 by rhorbach      ########   odam.nl          #
+#    Updated: 2023/10/19 16:52:28 by rhorbach      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
 OBJDIR = obj
+
+CC = cc
 
 CFLAGS = -Wall -Wextra -Werror
 CFLAGS += $(if $(DEBUG),-g)
@@ -29,15 +31,14 @@ NC := \033[0m
 #########################
 
 FILES = \
-	src/philo.c
+	src/main.c	\
+	src/philo.c	\
+	src/util.c
 
 HEADERS = \
-	# src/cmd_lst/cmd_lst.h						\
-	# src/env/env.h 								\
-	# src/redirect_lst/redir_lst.h				\
-	# src/tokens/tokens.h							\
-	# src/error.h 								\
-	# src/types.h
+	src/philo.h	\
+	src/types.h	\
+	src/util.h
 
 #########################
 
