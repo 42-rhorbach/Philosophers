@@ -6,7 +6,7 @@
 #    By: rhorbach <rhorbach@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/10/10 17:07:20 by rhorbach      #+#    #+#                  #
-#    Updated: 2023/10/19 16:52:28 by rhorbach      ########   odam.nl          #
+#    Updated: 2023/11/15 17:22:44 by rhorbach      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,13 +31,23 @@ NC := \033[0m
 #########################
 
 FILES = \
+	src/clear.c			\
+	src/init.c			\
+	src/main.c			\
 	src/main.c	\
 	src/philo.c	\
 	src/util.c
+	src/philo.c			\
+	src/util_advanced.c	\
+	src/util_basic.c
 
 HEADERS = \
+	src/clear.h			\
+	src/init.h			\
 	src/philo.h	\
 	src/types.h	\
+	src/philo.h			\
+	src/types.h			\
 	src/util.h
 
 #########################
