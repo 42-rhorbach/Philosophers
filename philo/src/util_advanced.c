@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   util.c                                             :+:    :+:            */
+/*   util_advanced.c                                    :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rhorbach <rhorbach@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/19 16:44:41 by rhorbach      #+#    #+#                 */
-/*   Updated: 2023/11/14 15:45:44 by rhorbach      ########   odam.nl         */
+/*   Updated: 2023/11/30 16:19:09 by rhorbach      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <sys/time.h>
 #include <limits.h>
 #include "types.h"
+#include "mutex.h"
 #include "util.h"
 
 /**
@@ -68,13 +69,13 @@ void	msleep(t_data *data, long ms)
 	gettimeofday(&tv_start, NULL);
 	while (us_left > 500)
 	{
-		pthread_mutex_lock(&data->someone_died_mutex);
-		if (data->someone_died == true)
+		mutex_lock(&data->stop_program_mutex);
+		if (data->stop_program == true)
 		{
-			pthread_mutex_unlock(&data->someone_died_mutex);
+			mutex_unlock(&data->stop_program_mutex);
 			return ;
 		}
-		pthread_mutex_unlock(&data->someone_died_mutex);
+		mutex_unlock(&data->stop_program_mutex);
 		usleep(500);
 		gettimeofday(&tv_current, NULL);
 		us_left = ms * 1000 - us_diff(tv_start, tv_current);
@@ -83,16 +84,31 @@ void	msleep(t_data *data, long ms)
 		usleep(us_left);
 }
 
-void	print(t_philo *philo, char const *msg)
+void	print(t_philo *philo, t_event event)
 {
+	static bool		printing = true;
+	static char		*messages[] = {
+	[FORK] = "has taken a fork",
+	[EAT] = "is eating",
+	[SLEEP] = "is sleeping",
+	[THINK] = "is thinking",
+	[DIE] = "died"
+	};
 	struct timeval	tv;
 	long			ms_since_start;
 
-	gettimeofday(&tv, NULL);
-	ms_since_start = 1000 * (tv.tv_sec - philo->data->start_time.tv_sec) + \
-		(tv.tv_usec - philo->data->start_time.tv_usec) / 1000;
-	pthread_mutex_lock(&philo->data->someone_died_mutex);
-	if (!philo->data->someone_died)
-		printf("%ld %zu %s\n", ms_since_start, philo->id, msg);
-	pthread_mutex_unlock(&philo->data->someone_died_mutex);
+	mutex_lock(&philo->data->print_mutex);
+	if (printing)
+	{
+		gettimeofday(&tv, NULL);
+		ms_since_start = 1000 * (tv.tv_sec - philo->data->start_time.tv_sec) + \
+			(tv.tv_usec - philo->data->start_time.tv_usec) / 1000;
+		printf("%ld %zu %s\n", ms_since_start, philo->id, messages[event]);
+		mutex_lock(&philo->data->hungry_philos_mutex);
+		if (event == DIE || (event == EAT \
+			&& (philo->data->hungry_philos == 0)))
+			printing = false;
+		mutex_unlock(&philo->data->hungry_philos_mutex);
+	}
+	mutex_unlock(&philo->data->print_mutex);
 }
