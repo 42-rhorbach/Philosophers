@@ -1,25 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   philo.h                                            :+:    :+:            */
+/*   destroy.h                                          :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rhorbach <rhorbach@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/10/19 16:50:20 by rhorbach      #+#    #+#                 */
-/*   Updated: 2023/12/01 15:58:43 by rhorbach      ########   odam.nl         */
+/*   Created: 2023/12/01 15:28:08 by rhorbach      #+#    #+#                 */
+/*   Updated: 2023/12/01 16:12:47 by rhorbach      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef DESTROY_H
+# define DESTROY_H
 
 # include "types.h"
 
-//src/philo.c
-void	join_philos(int philo_num, t_philo *philos);
-bool	start_philos(t_data *data);
-
-//src/philo_routine.c
-void	*philo_start_routine(void *arg);
+void		destroy(t_data *data);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rhorbach <rhorbach@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/14 16:06:42 by rhorbach      #+#    #+#                 */
-/*   Updated: 2023/11/30 17:48:22 by rhorbach      ########   odam.nl         */
+/*   Updated: 2023/12/01 15:34:49 by rhorbach      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,18 @@
 #include "types.h"
 #include "util.h"
 
+bool	init_mutexes(t_data *data)
+{
+	return (mutex_init(&data->print_mutex) \
+			&& mutex_init(&data->hungry_philos_mutex) \
+			&& mutex_init(&data->stop_program_mutex));
+}
+
 bool	init_forks(t_data *data)
 {
 	int				i;
 
-	data->forks = ft_calloc(data->philo_num, sizeof(*data->forks));
+	data->forks = ph_calloc(data->philo_num, sizeof(*data->forks));
 	if (data->forks == NULL)
 	{
 		ph_putendl_fd("Error: forks: memory allocation failed", STDERR_FILENO);
@@ -49,7 +56,7 @@ bool	init_philos(t_data *data)
 {
 	int	i;
 
-	data->philos = ft_calloc(data->philo_num, sizeof(*data->philos));
+	data->philos = ph_calloc(data->philo_num, sizeof(*data->philos));
 	if (data->philos == NULL)
 	{
 		ph_putendl_fd("Error: memory allocation failed", STDERR_FILENO);

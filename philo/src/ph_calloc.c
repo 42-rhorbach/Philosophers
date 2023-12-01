@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   ft_calloc.c                                        :+:    :+:            */
+/*   ph_calloc.c                                        :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: rhorbach <rhorbach@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/11/30 17:17:13 by rhorbach      #+#    #+#                 */
-/*   Updated: 2023/11/30 17:18:13 by rhorbach      ########   odam.nl         */
+/*   Updated: 2023/12/01 15:26:08 by rhorbach      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
  * @param c The byte-value to fill with
  * @param n Amount of bytes to fill
  */
-static void	*ft_memset(void *ptr, int c, size_t n)
+static void	*ph_memset(void *ptr, int c, size_t n)
 {
 	unsigned long	counter;
 	unsigned char	*str;
@@ -40,9 +40,9 @@ static void	*ft_memset(void *ptr, int c, size_t n)
  * @param ptr A pointer to the memory block to be filled
  * @param n Amount of bytes to fill
  */
-static void	ft_bzero(void *ptr, size_t n)
+static void	ph_bzero(void *ptr, size_t n)
 {
-	ft_memset(ptr, '\0', n);
+	ph_memset(ptr, '\0', n);
 }
 
 /**
@@ -51,7 +51,7 @@ static void	ft_bzero(void *ptr, size_t n)
  * @param size The size in bytes of a single element
  * @returns A pointer to the allocated memory, NULL on error
  */
-void	*ft_calloc(size_t count, size_t size)
+void	*ph_calloc(size_t count, size_t size)
 {
 	void	*ptr;
 
@@ -59,6 +59,6 @@ void	*ft_calloc(size_t count, size_t size)
 		return (NULL);
 	ptr = malloc(count * size);
 	if (ptr != NULL)
-		ft_bzero(ptr, count * size);
+		ph_bzero(ptr, count * size);
 	return (ptr);
 }

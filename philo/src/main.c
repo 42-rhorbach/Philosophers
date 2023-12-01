@@ -6,7 +6,7 @@
 /*   By: rhorbach <rhorbach@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/10/19 16:44:16 by rhorbach      #+#    #+#                 */
-/*   Updated: 2023/11/30 17:59:19 by rhorbach      ########   odam.nl         */
+/*   Updated: 2023/12/01 16:12:31 by rhorbach      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,27 @@
 
 #include "philo.h"
 #include "init.h"
+#include "destroy.h"
 #include "mutex.h"
 #include "types.h"
 #include "util.h"
+
+static bool	philo_has_died(t_philo *philo)
+{
+	struct timeval	current_time;
+
+	gettimeofday(&current_time, NULL);
+	mutex_lock(&philo->last_meal_mutex);
+	if (us_diff(philo->time_last_meal, current_time) \
+												/ 1000 < philo->data->tt_die)
+	{
+		mutex_unlock(&philo->last_meal_mutex);
+		return (false);
+	}
+	mutex_unlock(&philo->last_meal_mutex);
+	print(philo, DIE);
+	return (true);
+}
 
 static bool	parse_args(t_data *data, char **argv)
 {
@@ -37,53 +55,6 @@ static bool	parse_args(t_data *data, char **argv)
 		return (false);
 	}
 	return (true);
-}
-
-static bool	init_mutexes(t_data *data)
-{
-	return (mutex_init(&data->print_mutex) \
-			&& mutex_init(&data->hungry_philos_mutex) \
-			&& mutex_init(&data->stop_program_mutex));
-}
-
-static void	destroy_forks(t_data *data)
-{
-	int	i;
-
-	if (data->forks == NULL)
-		return ;
-	i = 0;
-	while (i < data->philo_num)
-	{
-		mutex_destroy(&data->forks[i]);
-		i++;
-	}
-}
-
-static void	destroy_philosophers(t_data *data)
-{
-	int	i;
-
-	if (data->philos == NULL)
-		return ;
-	i = 0;
-	while (i < data->philo_num)
-	{
-		mutex_destroy(&data->philos->last_meal_mutex);
-		i++;
-	}
-}
-
-//TODO: CREATE DESTROY_FORKS && DESTROY_PHILOS
-static void	destroy(t_data *data)
-{
-	mutex_destroy(&data->print_mutex);
-	mutex_destroy(&data->hungry_philos_mutex);
-	mutex_destroy(&data->stop_program_mutex);
-	destroy_forks(data);
-	free(data->forks);
-	destroy_philosophers(data);
-	free(data->philos);
 }
 
 static bool	init(t_data *data, char **argv)
@@ -104,6 +75,30 @@ static bool	init(t_data *data, char **argv)
 	if (data->philo_num >= 3)
 		data->stair_offset = data->tt_eat / ((data->philo_num - 1) / 2);
 	return (true);
+}
+
+void	monitor_philos(t_data *data)
+{
+	int	i;
+
+	while (true)
+	{
+		i = 0;
+		while (i < data->philo_num)
+		{
+			if (philo_has_died(&data->philos[i]))
+				return ;
+			i++;
+		}
+		mutex_lock(&data->hungry_philos_mutex);
+		if (data->hungry_philos == 0)
+		{
+			mutex_unlock(&data->hungry_philos_mutex);
+			return ;
+		}
+		mutex_unlock(&data->hungry_philos_mutex);
+		usleep(500);
+	}
 }
 
 // Printf is thread-safe, but helgrind can't detect it
@@ -129,7 +124,6 @@ int	main(int argc, char **argv)
 	data.stop_program = true;
 	mutex_unlock(&data.stop_program_mutex);
 	join_philos(data.philo_num, data.philos);
-
 	destroy(&data);
 	return (EXIT_SUCCESS);
 }

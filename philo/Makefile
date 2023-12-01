@@ -6,7 +6,7 @@
 #    By: rhorbach <rhorbach@student.codam.nl>         +#+                      #
 #                                                    +#+                       #
 #    Created: 2023/10/10 17:07:20 by rhorbach      #+#    #+#                  #
-#    Updated: 2023/11/30 17:19:07 by rhorbach      ########   odam.nl          #
+#    Updated: 2023/12/01 15:48:06 by rhorbach      ########   odam.nl          #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,15 +31,18 @@ NC := \033[0m
 #########################
 
 FILES = \
-	src/ft_calloc.c		\
+	src/destroy.c		\
+	src/ph_calloc.c		\
 	src/init.c			\
 	src/main.c			\
 	src/mutex.c			\
+	src/philo_routine.c	\
 	src/philo.c			\
 	src/util_advanced.c	\
 	src/util_basic.c
 
 HEADERS = \
+	src/destroy.h		\
 	src/init.h			\
 	src/mutex.h			\
 	src/philo.h			\
